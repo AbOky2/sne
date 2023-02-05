@@ -1,4 +1,4 @@
-
+import Link from 'next/link';
 
 
 export default function Nav() {
@@ -6,14 +6,14 @@ export default function Nav() {
         <nav className='p-4 border shadow-lg sticky'>
             <ul className=' flex items-center gap-4'>
                 <li >
-                   
-                        <a className='text-[26px] font-semibold  hover:text-green-900' href='/'>Accueil</a>
-                
+                    <Link href="/">
+                        <p className='text-[26px] font-semibold  hover:text-green-900'>Accueil</p>
+                    </Link>
                 </li>
                 <li>
-                    
-                        <a className='text-[26px] font-semibold hover:text-green-900' href="/add-post">Ajout des postes</a>
-                    
+                    <Link href="/add-post">
+                        <p className='text-[26px] font-semibold hover:text-green-900'>Ajout des postes</p>
+                    </Link>
                 </li>
             </ul>
         </nav>

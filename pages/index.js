@@ -13,10 +13,10 @@ export default function Home({ posts }) {
 
             <Nav />
 
-            <div className='bg-white  w-full text-[30px] p-4 items-center text-center font-bold text-green-900 mt-16'>
+            {/* <div className='bg-white  w-full text-[30px] p-4 items-center text-center font-bold text-green-900 mt-16'>
                 Bienvenue dans la plateforme d'archivage. Ici vous pouvez consulter et archiver des documents.
 
-            </div>
+            </div> */}
 
             <main>
                 <div className=' p-4 w-full '>
