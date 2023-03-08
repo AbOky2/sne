@@ -1,16 +1,23 @@
+
+
 const { connectToDatabase } = require('../../lib/mongodb');
+const multer = require('multer');
 const ObjectId = require('mongodb').ObjectId;
 
-// Returns a Multer instance that provides several methods for generating 
-// middleware that process files uploaded in multipart/form-data format.
-// const upload = multer({
-//     storage: multer.diskStorage({
-//       destination: './public/uploads',
-//       filename: (req, file, cb) => cb(null, file.originalname),
-//     }),
-//   });
-
+const storage = multer.diskStorage({
+    destination: '../../public/images',
+    filename: function (req, file, cb) {
+      cb(
+        null,
+        file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+      );
+    },
+  });
   
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 },
+  }).single('file');
 
 export default async function handler(req, res) {
     // methode switch pour les conditions
@@ -20,7 +27,16 @@ export default async function handler(req, res) {
         }
 
         case 'POST': {
-            return addPost(req, res);
+            return upload(req, res, function (err) {
+                if (err) {
+                    // Une erreur s'est produite lors du téléchargement du fichier
+                    return res.json({
+                        message: new Error(err).message,
+                        success: false,
+                    });
+                }
+                return addPost(req, res);
+            });
         }
 
         case 'PUT': {
@@ -32,6 +48,36 @@ export default async function handler(req, res) {
         }
     }
 };
+
+
+
+
+//Fonction permettant d'ajouter des posts
+async function addPost(req, res) {
+    try {
+        // connexion à la base de donnée
+        let { db } = await connectToDatabase();
+        // ajout de post
+        const post = JSON.parse(req.body);
+        if(req.file) post.file = req.file.filename; // Ajoutez le nom du fichier au document
+        await db.collection('posts').insertOne(post);
+        // message
+        return res.json({
+            message: 'Le poste a été ajouter avec succès',
+            success: true,
+        });
+    } catch (error) {
+        // erreur
+        return res.json({
+            message: new Error(error).message,
+            success: false,
+        });
+    }
+};
+
+
+
+
 
 async function getPosts(req,res){
     try {
@@ -46,27 +92,6 @@ async function getPosts(req,res){
         // retourner message
         return res.json({
             message: JSON.parse(JSON.stringify(posts)),
-            success: true,
-        });
-    } catch (error) {
-        // erreur
-        return res.json({
-            message: new Error(error).message,
-            success: false,
-        });
-    }
-};
-
-//Fonction permettant d'ajouter des posts
-async function addPost(req, res) {
-    try {
-        // connexion à la base de donnée
-        let { db } = await connectToDatabase();
-        // ajout de post
-        await db.collection('posts').insertOne(JSON.parse(req.body, req.file));
-        // message
-        return res.json({
-            message: 'Le poste a été ajouter avec succès',
             success: true,
         });
     } catch (error) {
@@ -101,7 +126,7 @@ async function updatePost(req, res) {
     } catch (error) {
 
         // erreur
-        return res.json({
+        return res.status(500).json({
             message: new Error(error).message,
             success: false,
         });
@@ -128,10 +153,13 @@ async function deletePost(req, res) {
     } catch (error) {
 
         // retourner l'erreur
-        return res.json({
+        return res.status(500).json({
             message: new Error(error).message,
             success: false,
         });
     }
 }
+
+
+
 

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { Document, Page } from 'react-pdf';
+
 
 export default function PostCard({ post }) {
     const [publishing, setPublishing] = useState(false);
@@ -55,6 +57,12 @@ export default function PostCard({ post }) {
                 <h3 className='text-[30px] font-bold'>{post.title}</h3>
                 <p className=' text-base'>{post.content}</p>
                 <small>{new Date(post.createdAt).toLocaleDateString()}</small>
+                <br />
+                {post.image ? (
+                        // <div>{post.image}</div>
+                        <div className="w-full max-h-60 object-contain mb-4">
+                        <iframe src={post.image}  /></div>
+                    ) : null}
                 <br />
                 {!post.published ? (
                     <button className='bg-red-900 p-4 rounded-xl mb-4 hover:bg-blue-900' type="button" onClick={() => publishPost(post._id)}>

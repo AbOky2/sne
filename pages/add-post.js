@@ -1,35 +1,18 @@
 import { useState } from 'react';
-
-
-
-
 import Nav from '../components/Nav';
-
-
 
 export default function AddPost() {
     const [title, setTitle] = useState('');
-    const [file, setFile] = useState('');
-
     const [content, setContent] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
-
     const [image, setImage] = useState(null);
     const [imageInput, setImageInput] = useState(null);
 
     const handleImage = (e) => {
         const file = e.target.files[0];
-
-        const fileReader = new FileReader();
-        fileReader.onload = function(e){
-            console.log(e.target.result);
-            setImage (e.target.result);
-
-
-        }
-        fileReader.readAsDataURL(file);
-
+        //setImage(file);
+        setImage(URL.createObjectURL(file));
     }
 
     const handlePost = async (e) => {
@@ -60,14 +43,11 @@ export default function AddPost() {
         let data = await response.json();
 
         if (data.success) {
-            // reset the fields
             setTitle('');
             setContent('');
-            setImage('image');
-            // set the message
+            setImage(null);
             return setMessage(data.message);
         } else {
-            // set the error
             return setError(data.message);
         }
     };
@@ -91,9 +71,10 @@ export default function AddPost() {
                         <label className='mb-4 text-[30px] font-bold'>Titre</label>
                         <input
                             type="text"
-                            name="title"
-                            onChange={(e) => setTitle(e.target.value)}
+                            name="title"     
                             value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                       
                             placeholder="titre"
                         />
                     </div>
@@ -101,46 +82,24 @@ export default function AddPost() {
                         <label className='mb-4 text-[30px] font-bold'>Contenu</label>
                         <textarea
                             name="content"
-                            onChange={(e) => setContent(e.target.value)}
                             value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            
                             placeholder="Contenu de votre poste"
                         />
                     </div>
-                    <div className="custom-file mb-3">
-                        <input type="file" className="custom-file-input" name="file" id="file1" 
-                        // onchange=
-                        // {(e) => setFile(e.target.value)}
-                        onChange = {handleImage}
-                        //value = {image}
-                        // value={'readSingleFile(this.files)'}
-                        
-                        />
-                        <label className="custom-file-label" htmlFor="file1" id="file-label">Selectionner le fichier</label>
+                    <div className=" mb-3">
+                        <input type="file"  name="image" onChange={handleImage} />
                     </div>
-
-                    {/* <FileUpload name="demo" url="./upload"></FileUpload> */}
+                    {image ? (
+                        <img src={image} className="w-full max-h-60 object-contain mb-4" />
+                    ) : null}
 
                     <div >
                         <button className=" bg-green-800 rounded-xl p-4 hover:bg-green-400" type="submit" >Ajout du poste</button>
                     </div>
                 </form>
-            </div>
-
-            {/* <div class="container">
-        <div class="row">
-            <div class="col-md-6 m-auto">
-                <h1 class="my-4">Lets upload some stuff</h1>
-                <form action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" name="file" id="file1" onchange="readSingleFile(this.files)"/>
-                        <label class="custom-file-label" for="file1" id="file-label">Choose file</label>
-                    </div>
-                    <input type="submit" value="Submit" class="btn btn-primary btn-block"/>
-                </form>
-            </div>
-        </div>
-    </div> */}
-            
+            </div>   
         </div>
     );
 }
