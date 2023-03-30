@@ -5,17 +5,23 @@ const multer = require('multer');
 const ObjectId = require('mongodb').ObjectId;
 
 const storage = multer.diskStorage({
-    destination: '../../public/images',
+    destination: function (req, file, cb) {
+        cb(null, "photos/");
+      },
     filename: function (req, file, cb) {
       cb(
         null,
         file.fieldname + '-' + Date.now() + path.extname(file.originalname)
       );
     },
+
   });
+  console.log('destination  : ', storage);
+
   
   const upload = multer({
-    storage: storage,
+    dest:'photos/',
+    
     limits: { fileSize: 1000000 },
   }).single('file');
 
