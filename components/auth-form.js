@@ -3,10 +3,10 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 
-async function createUser(email, password) {
+async function createUser(email, password, role) {
   const response = await fetch('/api/auth/signup', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password,role }),
     headers: {
       'Content-Type': 'application/json',
     },
