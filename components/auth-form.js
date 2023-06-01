@@ -62,47 +62,60 @@ function AuthForm() {
   }
 
   return (
-    <section className='max-w-xl mx-auto my-7'>
+    <section className=' bg-white p-4'>
       {!registered ? (
         <>
-          <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
-          <form onSubmit={submitHandler}>
-            <div >
-              <label htmlFor='email'>Your Email</label>
-              <input type='email' id='email' required ref={emailInputRef} />
-            </div>
-            <div >
-              <label htmlFor='password'>Your Password</label>
-              <input
-                type='password'
-                id='password'
-                required
-                ref={passwordInputRef}
-              />
-            </div>
-            <div >
-              <label htmlFor='role'>Role</label>
-              <select name='role' id='role-select' ref={roleInputRef}>
-                <option value='admin'>admin</option>
-                <option value='user'>user</option>
-              </select>
-              {/* <input
-                type='role'
-                id='role'
-                required
-                ref={roleInputRef}
-              /> */}
-            </div>
-            <div className='my-5'>
-              <button className='button button-color mr-4'>{isLogin ? 'Login' : 'Create Account'}</button>
-              <button
-                type='button'
+          <div className=' p-4 md:flex grid'>
+          <div className='bg-white p-4 w-full md:order-first order-last'>
+          <h1 className='md:text-[50px] text-4xl font-bold text-[#285689]'>{isLogin ? 'Se connecter' : 'Sign Up'}</h1>
+              <form onSubmit={submitHandler}>
+                <div className=' p-4 flex flex-col'>
+                  <label className=' font-bold' htmlFor='email'>Your Email</label>
+                  <input className='bg-[#F1F1F1] rounded-xl p-2' type='email' id='email' required ref={emailInputRef} />
+                </div>
+                <div  className=' p-4 flex flex-col'>
+                  <label  className=' font-bold' htmlFor='password'>Your Password</label>
+                  <input
+                  className='bg-[#F1F1F1] rounded-xl p-2'
+                    type='password'
+                    id='password'
+                    required
+                    ref={passwordInputRef}
+                  />
+                </div>
+                <div className=' p-4 flex flex-col'>
+                  <label  className=' font-bold ' htmlFor='role'>Role</label>
+                  <select  className=' font-bold bg-[#F1F1F1] rounded-xl p-2' name='role' id='role-select' ref={roleInputRef}>
+                    <option value='admin'>admin</option>
+                    <option value='user'>user</option>
+                  </select>
+                  {/* <input
+                    type='role'
+                    id='role'
+                    required
+                    ref={roleInputRef}
+                  /> */}
+                </div>
+                <div className='my-5'>
+                  <button className='button button-color mr-4 font-bold'>{isLogin ? 'Login' : 'Create Account'}</button>
+                  <button
+                    type='button'
+                    className=' font-bold'
 
-                onClick={switchAuthModeHandler}>
-                {isLogin ? 'No Account? Create One' : 'Already a user? Login'}
-              </button>
+                    onClick={switchAuthModeHandler}>
+                    {isLogin ? 'No Account? Create One' : 'Already a user? Login'}
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+
+            <div className='bg-green-900 w-full'>
+              <img className=' w-full h-full' src='chad1.jpg'/>
+            </div>
+
+          </div>
+
+
         </>
       ) : (
         <div className=''>

@@ -4,9 +4,9 @@ import Nav from '../components/Nav';
 import PostCard from '../components/PostCard';
 import styles from '../styles/Home.module.css';
 
-export default function Home({ posts }) {
+export default function Home() {
     return (
-        <div>
+        <div className=' '>
             <Head>
                 <title>Accueil</title>
             </Head>
@@ -18,36 +18,91 @@ export default function Home({ posts }) {
 
             </div> */}
 
+            <p className='md:text-[48px] text-center font-["DM Serif Display"] font-bold font-serif mt-4'> Liste des dossiers</p>
+
             <main>
-                <div className=' p-4 w-full '>
-                    {posts.length === 0 ? (
-                        <h2>Pas de poste ajouter pour le moment</h2>
-                    ) : (
-                        <ul className=' items-center w-full md:grid md:grid-cols-2 gap-4'>
-                            {posts.map((post, i) => (
-                                <PostCard post={post} key={i} />
-                            ))}
-                        </ul>
-                    )}
+                <div className=' p-4 w-full grid grid-cols-2 gap-4 md:grid-cols-3 '>
+
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold hover:-rotate-2'>
+                        <a href='/dossiers'>
+                        Documents contractuels
+                        </a>
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold hover:rotate-2 '>
+                        Communications
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Le Dossier d'execution
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Les plannings
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Reporting
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Les instructions de chantier
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Les modifications
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Les Essais
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Les demandes de reception
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Photothèque
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Non-conformité
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        AC, AP et Action d'amélioration
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Securité / Rapport d'accident
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Attachements et décomptes des travaux
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Attachements et décomptes du Consultant
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Reception provisoire
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Reception définitive
+                        <img src='folder.png'/>
+                    </div>
+                    <div className='bg-white rounded-lg p-4 hover:shadow-md font-bold'>
+                        Autre
+                        <img src='folder.png'/>
+                    </div>
+
+
+              
                 </div>
             </main>
         </div>
     );
 }
 
-export async function getServerSideProps(ctx) {
-    // get the current environment
-    let dev = process.env.NODE_ENV !== 'production';
-    let { DEV_URL, PROD_URL } = process.env;
-
-    // request posts from api
-    let response = await fetch(`${dev ? DEV_URL : PROD_URL}/api/posts`);
-    // extract the data
-    let data = await response.json();
-
-    return {
-        props: {
-            posts: data['message'],
-        },
-    };
-}
