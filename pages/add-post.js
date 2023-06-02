@@ -57,7 +57,7 @@ export default function AddPost() {
   return (
     <div>
       <Nav />
-      <div className="bg-gray-600 p-4 rounded-xl border-1 border">
+      <div className="bg-cyan-500 mt-4 p-4 rounded-xl border-1 border">
         <form onSubmit={handlePost} className="">
           {error ? (
             <div className="">

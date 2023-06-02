@@ -2,9 +2,10 @@ import React from 'react'
 import Nav from '@/components/Nav'
 import PostCard from '@/components/PostCard'
 
+
 function dossiers({ posts }) {
   return (
-    <div>
+    <>
 
         <Nav />
 
@@ -25,7 +26,7 @@ function dossiers({ posts }) {
         )}
     </div>
 </main>
-    </div>
+    </>
   )
 }
 

@@ -1,6 +1,7 @@
-const { connectToDatabase } = require("../../lib/mongodb");
-const multer = require("multer");
-const ObjectId = require("mongodb").ObjectId;
+import { connectToDatabase } from "../../lib/mongodb";
+import multer from "multer";
+import { ObjectId } from "mongodb";
+import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -9,71 +10,42 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     let extArray = file.mimetype.split("/");
     let extension = extArray[extArray.length - 1];
-    cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
-  }
-});
-console.log("destination  : ", storage);
-
-const upload = multer({
-//   dest: "photos/",
-
-//   //   limits: { fileSize: 1000000 },
-storage : storage
-}).single("image");
-
-export const config = {
-  api: {
-    bodyParser: false,
+    cb(null, file.fieldname + "-" + Date.now() + "." + extension);
   },
-};
+});
 
-export default async function handler(req, res) {
-  // methode switch pour les conditions
-  switch (req.method) {
-    case "GET": {
-      return getPosts(req, res);
-    }
+const upload = multer({ storage }).single("image");
 
-    case "POST": {
-      return upload(req, res, function (err) {
-        if (err) {
-          // Une erreur s'est produite lors du téléchargement du fichier
-          return res.json({
-            message: new Error(err).message,
-            success: false,
-          });
-        }
-        console.log(req.body, req.file);
-        return addPost(req, res);
-      });
-    }
-
-    case "PUT": {
-      return updatePost(req, res);
-    }
-
-    case "DELETE": {
-      return deletePost(req, res);
-    }
-  }
-}
-
-//Fonction permettant d'ajouter des posts
 async function addPost(req, res) {
   try {
-    // connexion à la base de donnée
-    let { db } = await connectToDatabase();
-    // ajout de post
-    const post = JSON.parse(req.body);
-    if (req.file) post.file = req.file.filename; // Ajoutez le nom du fichier au document
-    await db.collection("posts").insertOne(post);
-    // message
-    return res.json({
-      message: "Le poste a été ajouter avec succès",
-      success: true,
+    const { db } = await connectToDatabase();
+
+    upload(req, res, async function (err) {
+      if (err) {
+        return res.json({
+          message: new Error(err).message,
+          success: false,
+        });
+      }
+
+      let post = req.body;
+      if (typeof req.body === "string") {
+        post = JSON.parse(req.body);
+      }
+      if (req.file) {
+        post.file = req.file.filename;
+        const fileLink = "/photos/" + req.file.filename;
+        post.fileLink = fileLink;
+      }
+
+      await db.collection("posts").insertOne(post);
+
+      return res.json({
+        message: "Le poste a été ajouté avec succès",
+        success: true,
+      });
     });
   } catch (error) {
-    // erreur
     return res.json({
       message: new Error(error).message,
       success: false,
@@ -83,21 +55,19 @@ async function addPost(req, res) {
 
 async function getPosts(req, res) {
   try {
-    // on se connecte à la base de donnée
-    let { db } = await connectToDatabase();
-    // chercher les postes
+    const { db } = await connectToDatabase();
+
     let posts = await db
       .collection("posts")
       .find({})
       .sort({ published: -1 })
       .toArray();
-    // retourner message
+
     return res.json({
       message: JSON.parse(JSON.stringify(posts)),
       success: true,
     });
   } catch (error) {
-    // erreur
     return res.json({
       message: new Error(error).message,
       success: false,
@@ -105,14 +75,10 @@ async function getPosts(req, res) {
   }
 }
 
-//Fonction pour mettre à jour
-
 async function updatePost(req, res) {
   try {
-    // connexion à la base
-    let { db } = await connectToDatabase();
+    const { db } = await connectToDatabase();
 
-    // mise à jour
     await db.collection("posts").updateOne(
       {
         _id: new ObjectId(req.body),
@@ -120,13 +86,11 @@ async function updatePost(req, res) {
       { $set: { published: true } }
     );
 
-    // message
     return res.json({
       message: "Le poste a été modifié avec succès",
       success: true,
     });
   } catch (error) {
-    // erreur
     return res.status(500).json({
       message: new Error(error).message,
       success: false,
@@ -134,27 +98,45 @@ async function updatePost(req, res) {
   }
 }
 
-//Fonction pour supprimer des postes
 async function deletePost(req, res) {
   try {
-    // Connexion à la base
-    let { db } = await connectToDatabase();
+    const { db } = await connectToDatabase();
+    const postId = req.query.id;
 
-    // Suppression des postes
     await db.collection("posts").deleteOne({
-      _id: new ObjectId(req.body),
+      _id: new ObjectId(postId),
     });
 
-    // Message de suppression
     return res.json({
       message: "Le poste a été supprimé avec succès",
       success: true,
     });
   } catch (error) {
-    // retourner l'erreur
     return res.status(500).json({
       message: new Error(error).message,
       success: false,
     });
+  }
+}
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(req, res) {
+  switch (req.method) {
+    case "GET":
+      return getPosts(req, res);
+
+    case "POST":
+      return addPost(req, res);
+
+    case "PUT":
+      return updatePost(req, res);
+
+    case "DELETE":
+      return deletePost(req, res);
   }
 }
